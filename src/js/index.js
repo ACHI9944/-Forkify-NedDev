@@ -1,6 +1,8 @@
+import Recipe from './model/recipe';
 import Search from './model/search'
 import { clearLoader, elements, renderLoader } from './view/base';
 import * as searchView from './view/searchView';
+import * as recipeView from './view/recipeView';
 
 const state = {};
 window.state = state;
@@ -21,6 +23,29 @@ const controlSearch = async () => {
     }
 }
 
+//recipe
+const controlRecipe = async () => {
+    const id = window.location.hash.replace('#', '');
+    if(id){
+        // prepare UI
+        recipeView.clearRecipe();
+        renderLoader(elements.recipe);
+
+        state.search && searchView.activeLinkStyle(id);
+        //create new recipe object
+        state.recipe = new Recipe(id);
+        try {
+            await state.recipe.getRecipe();
+        } catch (error) {
+            alert('recipe error')
+        }
+
+        clearLoader();
+        recipeView.renderRecipe(state.recipe)
+    }
+}
+
+
 elements.searchForm.addEventListener('submit', (e) =>{
     e.preventDefault();
     controlSearch()
@@ -33,4 +58,12 @@ elements.searchResPages.addEventListener('click', e=> {
         searchView.clearResults();
         searchView.renderResult(state.search.result, goToPage);
     }
+})
+
+window.addEventListener('hashchange', () => {
+    controlRecipe();
+})
+
+window.addEventListener('load', () => {
+    controlRecipe();
 })
