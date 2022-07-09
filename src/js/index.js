@@ -78,8 +78,13 @@ window.addEventListener('load', () => {
 elements.recipe.addEventListener('click', e=> {
     if(e.target.matches('.btn-decrease, .btn-decrease *')){
         //decrease button
-        console.log('ylexar')
+        if(state.recipe.servings > 1){
+            state.recipe.updateServingIngredient('dec');
+            recipeView.updateServingIngredient(state.recipe);
+        }
     }else if(e.target.matches('btn-increase, .btn-increase *')){
-        console.log('ylexar+')
+        state.recipe.updateServingIngredient('inc');
+        recipeView.updateServingIngredient(state.recipe);
+
     }
 })
