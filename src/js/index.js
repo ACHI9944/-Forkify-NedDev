@@ -32,13 +32,20 @@ const controlRecipe = async () => {
         renderLoader(elements.recipe);
 
         state.search && searchView.activeLinkStyle(id);
+
         //create new recipe object
         state.recipe = new Recipe(id);
+
         try {
             await state.recipe.getRecipe();
         } catch (error) {
             alert('recipe error')
         }
+        state.recipe.parseIngredients();
+
+        //calculate time and servings
+        state.recipe.calcTime();
+        state.recipe.calcServing();
 
         clearLoader();
         recipeView.renderRecipe(state.recipe)
@@ -66,4 +73,13 @@ window.addEventListener('hashchange', () => {
 
 window.addEventListener('load', () => {
     controlRecipe();
+})
+
+elements.recipe.addEventListener('click', e=> {
+    if(e.target.matches('.btn-decrease, .btn-decrease *')){
+        //decrease button
+        console.log('ylexar')
+    }else if(e.target.matches('btn-increase, .btn-increase *')){
+        console.log('ylexar+')
+    }
 })
