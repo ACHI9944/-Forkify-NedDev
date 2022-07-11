@@ -1,8 +1,10 @@
 import Recipe from './model/recipe';
-import Search from './model/search'
+import Search from './model/search';
+import List from './model/list';
 import { clearLoader, elements, renderLoader } from './view/base';
 import * as searchView from './view/searchView';
 import * as recipeView from './view/recipeView';
+import * as listView from './view/listView';
 
 const state = {};
 window.state = state;
@@ -52,6 +54,35 @@ const controlRecipe = async () => {
     }
 }
 
+//shopping list
+const controlList = () => {
+    // Create a new list
+    if(!state.list) state.list = new List();
+
+    elements.shopping.innerHTML = '';
+
+    //add each ingredient
+    state.recipe.ingredients.forEach(el => {
+        const item = state.list.addItems(el.count, el.unit, el.ingredient)
+        listView.renderItem(item);
+    })
+}
+
+//handle delete and update list item events
+elements.shopping.addEventListener('click', e => {
+    const id = e.target.closest('.shopping__item').dataset.itemid;
+    if(e.target.matches('.shopping__delete, .shopping__delete *')){
+        //delete items
+
+        state.list.deleteItem(id);
+        listView.deleteItem(id)
+    }else if(e.target.matches('.shopping__count__input')){
+        //update items
+        const newValue = +e.target.value;
+        state.list.updateItem(id, newValue);
+    }
+})
+
 
 elements.searchForm.addEventListener('submit', (e) =>{
     e.preventDefault();
@@ -86,5 +117,7 @@ elements.recipe.addEventListener('click', e=> {
         state.recipe.updateServingIngredient('inc');
         recipeView.updateServingIngredient(state.recipe);
 
+    }else if(e.target.matches('.recipe__btn__add, .recipe__btn__add *')){
+        controlList();
     }
 })
